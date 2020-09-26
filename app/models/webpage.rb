@@ -1,0 +1,2 @@
+class Webpage < Contact
+end

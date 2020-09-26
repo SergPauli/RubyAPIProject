@@ -1,0 +1,2 @@
+class Whatsapp < Contact
+end

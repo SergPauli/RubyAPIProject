@@ -1,0 +1,2 @@
+class Viber < Contact
+end
