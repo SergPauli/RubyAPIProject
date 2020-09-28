@@ -11,10 +11,21 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # POST /resource
    def create
-     #super     
-     user =  User.new(devise_parameter_sanitizer.sanitize(:sign_up));
-     puts 'user.person.id-', user.person.id
+     #super
+     my_params =  devise_parameter_sanitizer.sanitize(:sign_up)
+     puts my_params
+     user =  User.new(my_params)
+     person =  Person.where(my_params[:person_attributes]).take()
+     if (person)
+       user.person = person
+     end
      begin
+        arg = Proc.new {true}
+        if user.person.contacts.find(arg) {|c| c.data == user.email}
+          email = Email.new(data: my_params[:email], description: 'используется для аутенификации')
+          user.person.contacts.push(email)
+        end
+
        if user.save
          render json: {status:"SUCCESS", message:'get params:', data: user},status: :ok
        else
@@ -56,12 +67,12 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # If you have extra params to permit, append them to the sanitizer.
   def configure_sign_up_params
-     devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :login, :password, person_attributes: [:id, :name, :surname, :middlename]])
+     devise_parameter_sanitizer.permit(:sign_up, keys: [:email, :login, :password, person_attributes: [:name, :surname, :middlename, :description]])
   end
 
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_account_update_params
-  #   devise_parameter_sanitizer.permit(:account_update, keys: [:attribute])
+  #   devise_parameter_sanitizer.permit(:account_update, keys: [:email, :login, :password, person_attributes: [:id, :name, :surname, :middlename, :description]])
   # end
 
   # The path used after sign up.

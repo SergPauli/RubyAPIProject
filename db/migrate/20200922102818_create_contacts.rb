@@ -4,7 +4,6 @@ class CreateContacts < ActiveRecord::Migration[6.0]
       t.string :type
       t.string :data
       t.text :description
-
       t.timestamps
     end
   end
