@@ -1,4 +1,4 @@
-class Api::V1::ContactstypesController < ApplicationController
+class Api::V1::ContactstypesController < ApiController
   def index
     contactstypes = Contactstype.order('created_at DESC');
     render json: {status:"SUCCESS", message:'Loaded types of contacts', data:contactstypes},status: :ok

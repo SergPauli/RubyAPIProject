@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class Users::RegistrationsController < Devise::RegistrationsController
-   before_action :configure_sign_up_params, only: [:create]
+class Api::Auth::RegistrationsController < Devise::RegistrationsController
+  before_action :configure_sign_up_params, only: [:create]
   # before_action :configure_account_update_params, only: [:update]
 
   # GET /resource/sign_up
@@ -10,10 +10,9 @@ class Users::RegistrationsController < Devise::RegistrationsController
   # end
 
   # POST /resource
-   def create
+  def create
      #super
-     my_params =  devise_parameter_sanitizer.sanitize(:sign_up)
-     puts my_params
+     my_params =  devise_parameter_sanitizer.sanitize(:sign_up)     
      user =  User.new(my_params)
      person =  Person.where(my_params[:person_attributes]).take()
      if (person)
@@ -72,7 +71,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   # If you have extra params to permit, append them to the sanitizer.
   # def configure_account_update_params
-  #   devise_parameter_sanitizer.permit(:account_update, keys: [:email, :login, :password, person_attributes: [:id, :name, :surname, :middlename, :description]])
+  #   devise_parameter_sanitizer.permit(:account_update, keys: [:attribute])
   # end
 
   # The path used after sign up.
