@@ -10,9 +10,11 @@ Rails.application.routes.draw do
       get 'confirmation', to: 'devise/confirmations#show'
     end    
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
-  namespace 'api' do
-    namespace 'v1' do
-      resources :contactstypes
-    end
+  scope 'api/v1/universal_api/:model_name', controller: 'api/v1/universal_api' do
+    post '/', action: 'index'
+    post '/:id', action: 'show'
+    post '/add', action: 'create'
+    put '/:id', action: 'update'
+    delete '/:id', action: 'destroy'
   end
 end

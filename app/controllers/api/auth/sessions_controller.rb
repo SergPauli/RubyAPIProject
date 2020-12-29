@@ -6,13 +6,19 @@ class Api::Auth::SessionsController < Devise::SessionsController
   
   attr_accessor :message  
   # POST /resource/sign_in
-   def create      
-     @user = User.find_by(login: params[:login])     
+  def create      
+    if  params[:email] 
+      @user = User.find_by(email: params[:email])
+    else
+      @user = User.find_by(login: params[:login])
+    end       
     if @user&.valid_password?(params[:password])       
       sign_in(:user, @user)      
       token = JsonWebToken.encode(sub: @user.id)
       SessionList.instance.add(token, @user)      
-      render json: { token: token, person: @user.person, message: self.message[:signed_in] }
+      render json: {token: token, data: {login: @user.login, 
+        email: @user.email, job: @user.job,  member: @user.member, 
+        name: @user.person.full_name}, message: self.message[:signed_in] }
     else       
        render json: {status:"ERROR", message: message[:invalid]},status: 401
     end
