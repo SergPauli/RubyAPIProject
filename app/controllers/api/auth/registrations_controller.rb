@@ -12,31 +12,28 @@ class Api::Auth::RegistrationsController < Devise::RegistrationsController
   # POST /resource
   def create
      #super
-     my_params =  devise_parameter_sanitizer.sanitize(:sign_up)     
-     user =  User.new(my_params)
-     person =  Person.where(my_params[:person_attributes]).take()
-     if (person)
-       user.person = person
-     end
-     begin
-        arg = Proc.new {true}
-        if user.person.contacts.find(arg) {|c| c.data == user.email}
-          email = Email.new(data: my_params[:email], description: 'используется для аутенификации')
-          user.person.contacts.push(email)
-        end
-
-       if user.save
-         render json: {status:"SUCCESS", message:'get params:', data: user},status: :ok
-       else
-         render json: {status:"ERROR", message: devise_parameter_sanitizer.sanitize(:sign_up),
-           data: user.errors},status: :unprocessable_entity
-       end
-       rescue ActiveRecord::RecordNotUnique
-             render json: {status:"ERROR", message:'user not added',
-               data:'user alredy exist'},status: :unprocessable_entity
-     end
-
-   end
+    my_params =  devise_parameter_sanitizer.sanitize(:sign_up)     
+    user =  User.new(my_params)
+    person =  Person.where(my_params[:person_attributes]).take()
+    if (person)
+      user.person = person
+    end     
+    arg = Proc.new {true}
+    if user.person.contacts.find(arg) {|c| c.data == user.email}
+      email = Email.new(data: my_params[:email], description: 'используется для аутенификации')
+      user.person.contacts.push(email)
+    end
+    if user.save
+      render json: {status:"SUCCESS", message:'get params:', data: user},status: :ok
+    else
+      render json: {status:"ERROR", message: devise_parameter_sanitizer.sanitize(:sign_up),
+      data: user.errors},status: :unprocessable_entity
+    end
+    rescue ActiveRecord::RecordNotUniqu
+        render json: {status:"ERROR", message:'user not added',
+        data:'user alredy exist'},status: :unprocessable_entity      
+  end        
+    
 
   # GET /resource/edit
   # def edit

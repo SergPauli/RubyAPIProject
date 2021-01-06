@@ -20,7 +20,7 @@ class Api::Auth::SessionsController < Devise::SessionsController
         email: @user.email, job: @user.job,  member: @user.member, 
         name: @user.person.full_name}, message: self.message[:signed_in] }
     else       
-       render json: {status:"ERROR", message: message[:invalid]},status: 401
+       render json: {status:"ERROR", message: self.message[:invalid]}, status: 202
     end
   end
 
@@ -36,7 +36,7 @@ class Api::Auth::SessionsController < Devise::SessionsController
     if SessionList.instance.exist(header)
        SessionList.instance.remove(header) 
     else        
-      render json: {error: 'session not found'}, status: 402      
+      render json: {error: 'session not found'}, status: 401      
     end    
    end
 

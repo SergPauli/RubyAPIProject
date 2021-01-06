@@ -17,55 +17,48 @@
         </div>
       </div>
       <div>
-        <button
-          class="p-button p-component"
-          type="button"
-          @click="loginHandler"
-        >
+        <button class="p-button p-component" type="button" @click="loginHandler">
           <span class="p-button-label">Sign In</span>
           <span class="p-ink"></span>
         </button>
-        <Toast />
-      </div>
-    </div>
-  </div>
+      </div>      
+    </div>        
+  </div>  
 </template>
 <script>
 import { defineComponent } from "vue";
-import { useToast } from "primevue/usetoast";
+import { useToast } from "primevue/usetoast"
 export default defineComponent({
   setup() {
     const toast = useToast();
   },
   data() {
-    console.log(this.$store.state);
     return {
-      username: this.$store.state.user ? this.$store.state.user.username : null,
-      password: null
+      username: this.$store.getters.user ? this.$store.getters.user.login : null,
+      password: null,
+      message: this.$store.getters.message      
     };
   },
-  methods: {
-    showError(detail) {
-      this.$toast.add({
-        severity: "Error",
-        summary: "Error",
-        detail: detail,
-        life: 3000
-      });
-    },
-    loginHandler() {
-      const data = {
-        username: this.username,
-        password: this.password
-      };
-      const response = await fetch(url, {method: method, body: body, headers: headers}) //запрос к API
-        const data = await response.json() //парсим полученный ответ
-        if (!response.ok) { // возникла ошибка, если есть месэдж, выводим его
-          this.showError(data.message);
-        }
-      this.$store.dispatch("login", data);      
-      this.$router.push("/");
+  watch: {    
+    message(){
+      if (this.message) {
+        this.$toast.add({ severity: this.message.severity, summary: this.message.summary, detail: this.message.detail });
+        this.$store.dispatch("clearMessage")
+      }
     }
-  }
-});
+  },
+  methods: {
+    loginHandler() {
+      if (this.username && this.username.length>2 && this.password && this.password.length>5) {
+        const data = {
+          login: this.username,
+          password: this.password,
+        };
+        this.$store.dispatch("login", data).then((result) => {
+          this.$router.push("/");
+        }).catch((error)=>this.message =  {severity:"error", detail: error.message, summary:"Access denied" });
+      } else  this.message= {severity:"error", summary: "Error", detail:"login or passord is incorrect"}  
+    },
+  },
+})
 </script>

@@ -13,9 +13,10 @@
       </div>
     </div>
     <router-view />
+    <Toast />
   </body>
 </template>
 <script>
-import { Vue } from "vue-class-component";
+import { Vue } from "vue-class-component"
 export default class LoginLayout extends Vue {}
 </script>
