@@ -59,26 +59,17 @@
       <div class="layout-content">
         <router-view />        
       </div>
+       <ToastSpot /> 
     </div>
     <div class="layout-footer"></div>
-    <div class="layout-mask"></div>  
-    <Toast />  
+    <div class="layout-mask"></div>      
   </div>
 </template>
 <script>
 import TopBar from "@/components/TopBar.vue"
+import ToastSpot from "@/components/ToastSpot.vue"
 import EventBus from "@/EventBus"
-import { useToast } from "primevue/usetoast"
-export default {
-  setup() {
-    const toast = useToast()    
-  },  
-  mounted() {
-    //console.log("store",this.$store)
-     if (this.message.detail) {
-        this.showMessage(this.message)        
-      }
-  },
+export default { 
   data() {
     return {
       layoutMode: "overlay",
@@ -88,30 +79,16 @@ export default {
       topbarMenuActive: !1,
       activeTopbarItem: null,
       menuActive: !1,
-      isLoggedIn: this.$store.getters.isLoggedIn,
-      message: this.$store.getters.message,
+      isLoggedIn: this.$store.getters.isLoggedIn,      
       user: this.$store.getters.user
     }
   },
   watch: {
     $route() {
-      (this.menuActive = !1), this.$toast.removeAllGroups()
-    },    
-    message(){
-      console.log(this.$store.getters.message)
-      //this.showMessage(this.message)
-    }
-  },
-  methods: {
-    showMessage(message) {
-      this.$toast.add({
-        severity: message.severity,
-        summary: message.summary,
-        detail: message.detail,
-        life: 3000
-      });
-      this.$store.dispatch("clear")
+      (this.menuActive = !1)
     },
+  },    
+  methods: {    
     onDocumentClick: function () {
       this.topbarItemClick ||
         ((this.activeTopbarItem = null), (this.topbarMenuActive = !1)),
@@ -204,6 +181,6 @@ export default {
       ]
     },
   },
-  components: { TopBar },
+  components: { TopBar, ToastSpot },
 }
 </script>

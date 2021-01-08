@@ -21,14 +21,16 @@ export default createStore({
       state.message = { severity: "success", summary: "success", detail: data.message }
       localStorage.setItem("user", JSON.stringify(state.session.user))
       localStorage.setItem("token", state.session.token)
-      state.status =""
+      state.status = "Authorized"
     },
-    logout(state) {
+    logout(state, data) {
       state.session.token = ""
-      state.status = ""
+      state.status = "Exit"
+      state.message = { severity: "success", summary: "success", detail: data.message }
       localStorage.removeItem("token")
     },
     message(state, message) {
+      console.log("state.message:", message)
       state.message = message
     },
     clear(state) {
@@ -42,11 +44,11 @@ export default createStore({
       return new authService().login(data).then((response) => commit("login", response))
       //.catch((error)=>commit("error", error.message))
     },
-    logout({ commit }) {
+    logout({ commit }, data) {
       commit("loading")
       return new authService()
         .logout()
-        .then(() => commit("logout"))
+        .then((response) => commit("logout", response))
         .catch((error) => commit("message", { severity: "error", summary: "Error", detail: error.message }))
     },
     error401({ commit }) {

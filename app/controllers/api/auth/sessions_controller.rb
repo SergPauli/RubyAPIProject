@@ -27,7 +27,7 @@ class Api::Auth::SessionsController < Devise::SessionsController
   # DELETE /resource/sign_out
    def destroy          
     signed_out = Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)    
-    render json: { message:  self.message[:signed_out], signed_out: signed_out }    
+    render json: { message:  self.message[:signed_out], signed_out:  signed_out}    
    end
 
    def verify_signed_out_user

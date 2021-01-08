@@ -12,11 +12,17 @@
         />
       </div>
     </div>
-    <router-view />
-    <Toast />
+    <router-view /> 
+    <ToastSpot />    
   </body>
 </template>
 <script>
-import { Vue } from "vue-class-component"
-export default class LoginLayout extends Vue {}
+import { defineComponent } from "vue"
+import ToastSpot from "@/components/ToastSpot.vue"
+export default defineComponent({   
+  
+  components: {   
+    ToastSpot
+  }
+})
 </script>

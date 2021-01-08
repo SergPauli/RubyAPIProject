@@ -12,8 +12,6 @@ export default class AuthService extends BaseService {
      
   }
   logout() {
-    return this.instance
-      .delete("sign_out", this.requestConfig)
-      .then((response) => response.data)      
+    return this.instance.delete("sign_out", this.requestConfig).then((response) => response.data)      
   }
 }
