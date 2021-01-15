@@ -1,7 +1,7 @@
 export default class DomHandler {
   static innerWidth(el) {
     let width = el.offsetWidth
-    let style = getComputedStyle(el)
+    const style = getComputedStyle(el)
 
     width += parseFloat(style.paddingLeft) + parseFloat(style.paddingRight)
     return width
@@ -9,19 +9,19 @@ export default class DomHandler {
 
   static width(el) {
     let width = el.offsetWidth
-    let style = getComputedStyle(el)
+    const style = getComputedStyle(el)
 
     width -= parseFloat(style.paddingLeft) + parseFloat(style.paddingRight)
     return width
   }
 
   static getWindowScrollTop() {
-    let doc = document.documentElement
+    const doc = document.documentElement
     return (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0)
   }
 
   static getWindowScrollLeft() {
-    let doc = document.documentElement
+    const doc = document.documentElement
     return (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0)
   }
 
@@ -30,7 +30,7 @@ export default class DomHandler {
       let width = el.offsetWidth
 
       if (margin) {
-        let style = getComputedStyle(el)
+        const style = getComputedStyle(el)
         width += parseFloat(style.marginLeft) + parseFloat(style.marginRight)
       }
 
@@ -45,7 +45,7 @@ export default class DomHandler {
       let height = el.offsetHeight
 
       if (margin) {
-        let style = getComputedStyle(el)
+        const style = getComputedStyle(el)
         height += parseFloat(style.marginTop) + parseFloat(style.marginBottom)
       }
 
@@ -60,7 +60,7 @@ export default class DomHandler {
       let height = el.clientHeight
 
       if (margin) {
-        let style = getComputedStyle(el)
+        const style = getComputedStyle(el)
         height += parseFloat(style.marginTop) + parseFloat(style.marginBottom)
       }
 
@@ -71,18 +71,18 @@ export default class DomHandler {
   }
 
   static getViewport() {
-    let win = window,
-      d = document,
-      e = d.documentElement,
-      g = d.getElementsByTagName("body")[0],
-      w = win.innerWidth || e.clientWidth || g.clientWidth,
-      h = win.innerHeight || e.clientHeight || g.clientHeight
+    const win = window,
+          d = document,
+          e = d.documentElement,
+          g = d.getElementsByTagName("body")[0],
+          w = win.innerWidth || e.clientWidth || g.clientWidth,
+          h = win.innerHeight || e.clientHeight || g.clientHeight
 
     return { width: w, height: h }
   }
 
   static getOffset(el) {
-    var rect = el.getBoundingClientRect()
+    const rect = el.getBoundingClientRect()
 
     return {
       top: rect.top + (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0),
@@ -100,9 +100,9 @@ export default class DomHandler {
   }
 
   static index(element) {
-    let children = element.parentNode.childNodes
+    const children = element.parentNode.childNodes
     let num = 0
-    for (var i = 0; i < children.length; i++) {
+    for (let i = 0; i < children.length; i++) {
       if (children[i] === element) return num
       if (children[i].nodeType === 1) num++
     }
@@ -111,12 +111,12 @@ export default class DomHandler {
 
   static addMultipleClasses(element, className) {
     if (element.classList) {
-      let styles = className.split(" ")
+      const styles = className.split(" ")
       for (let i = 0; i < styles.length; i++) {
         element.classList.add(styles[i])
       }
     } else {
-      let styles = className.split(" ")
+      const styles = className.split(" ")
       for (let i = 0; i < styles.length; i++) {
         element.className += " " + styles[i]
       }
@@ -156,7 +156,7 @@ export default class DomHandler {
 
   static getHeight(el) {
     let height = el.offsetHeight
-    let style = getComputedStyle(el)
+    const style = getComputedStyle(el)
 
     height -=
       parseFloat(style.paddingTop) +
@@ -169,7 +169,7 @@ export default class DomHandler {
 
   static getWidth(el) {
     let width = el.offsetWidth
-    let style = getComputedStyle(el)
+    const style = getComputedStyle(el)
 
     width -=
       parseFloat(style.paddingLeft) +
@@ -181,17 +181,17 @@ export default class DomHandler {
   }
 
   static absolutePosition(element, target) {
-    let elementDimensions = element.offsetParent
+    const elementDimensions = element.offsetParent
       ? { width: element.offsetWidth, height: element.offsetHeight }
       : this.getHiddenElementDimensions(element)
-    let elementOuterHeight = elementDimensions.height
-    let elementOuterWidth = elementDimensions.width
-    let targetOuterHeight = target.offsetHeight
-    let targetOuterWidth = target.offsetWidth
-    let targetOffset = target.getBoundingClientRect()
-    let windowScrollTop = this.getWindowScrollTop()
-    let windowScrollLeft = this.getWindowScrollLeft()
-    let viewport = this.getViewport()
+    const elementOuterHeight = elementDimensions.height
+    const elementOuterWidth = elementDimensions.width
+    const targetOuterHeight = target.offsetHeight
+    const targetOuterWidth = target.offsetWidth
+    const targetOffset = target.getBoundingClientRect()
+    const windowScrollTop = this.getWindowScrollTop()
+    const windowScrollLeft = this.getWindowScrollLeft()
+    const viewport = this.getViewport()
     let top, left
 
     if (targetOffset.top + targetOuterHeight + elementOuterHeight > viewport.height) {
@@ -215,7 +215,7 @@ export default class DomHandler {
   }
 
   static relativePosition(element, target) {
-    let elementDimensions = element.offsetParent
+    const elementDimensions = element.offsetParent
       ? { width: element.offsetWidth, height: element.offsetHeight }
       : this.getHiddenElementDimensions(element)
     const targetHeight = target.offsetHeight
@@ -256,13 +256,13 @@ export default class DomHandler {
   }
 
   static getScrollableParents(element) {
-    let scrollableParents = []
+    const scrollableParents = []
 
     if (element) {
-      let parents = this.getParents(element)
+      const parents = this.getParents(element)
       const overflowRegex = /(auto|scroll)/
       const overflowCheck = (node) => {
-        let styleDeclaration = window["getComputedStyle"](node, null)
+        const styleDeclaration = window["getComputedStyle"](node, null)
         return (
           overflowRegex.test(styleDeclaration.getPropertyValue("overflow")) ||
           overflowRegex.test(styleDeclaration.getPropertyValue("overflowX")) ||
@@ -270,12 +270,12 @@ export default class DomHandler {
         )
       }
 
-      for (let parent of parents) {
-        let scrollSelectors = parent.nodeType === 1 && parent.dataset["scrollselectors"]
+      for (const parent of parents) {
+        const scrollSelectors = parent.nodeType === 1 && parent.dataset["scrollselectors"]
         if (scrollSelectors) {
-          let selectors = scrollSelectors.split(",")
-          for (let selector of selectors) {
-            let el = this.findSingle(parent, selector)
+          const selectors = scrollSelectors.split(",")
+          for (const selector of selectors) {
+            const el = this.findSingle(parent, selector)
             if (el && overflowCheck(el)) {
               scrollableParents.push(el)
             }
@@ -290,7 +290,7 @@ export default class DomHandler {
   static getHiddenElementOuterHeight(element) {
     element.style.visibility = "hidden"
     element.style.display = "block"
-    let elementHeight = element.offsetHeight
+    const elementHeight = element.offsetHeight
     element.style.display = "none"
     element.style.visibility = "visible"
 
@@ -300,7 +300,7 @@ export default class DomHandler {
   static getHiddenElementOuterWidth(element) {
     element.style.visibility = "hidden"
     element.style.display = "block"
-    let elementWidth = element.offsetWidth
+    const elementWidth = element.offsetWidth
     element.style.display = "none"
     element.style.visibility = "visible"
 
@@ -308,7 +308,7 @@ export default class DomHandler {
   }
 
   static getHiddenElementDimensions(element) {
-    var dimensions = {}
+    const dimensions = {}
     element.style.visibility = "hidden"
     element.style.display = "block"
     dimensions.width = element.offsetWidth
@@ -322,9 +322,9 @@ export default class DomHandler {
   static fadeIn(element, duration) {
     element.style.opacity = 0
 
-    var last = +new Date()
-    var opacity = 0
-    var tick = function() {
+    let last = +new Date()
+    let opacity = 0
+    const tick = function() {
       opacity = +element.style.opacity + (new Date().getTime() - last) / duration
       element.style.opacity = opacity
       last = +new Date()
@@ -338,12 +338,12 @@ export default class DomHandler {
   }
 
   static fadeOut(element, ms) {
-    var opacity = 1,
-      interval = 50,
-      duration = ms,
-      gap = interval / duration
+    let opacity = 1
+    const interval = 50
+    const duration = ms
+    const gap = interval / duration
 
-    let fading = setInterval(() => {
+    const fading = setInterval(() => {
       opacity -= gap
 
       if (opacity <= 0) {
@@ -366,17 +366,17 @@ export default class DomHandler {
   }
 
   static scrollInView(container, item) {
-    let borderTopValue = getComputedStyle(container).getPropertyValue("borderTopWidth")
-    let borderTop = borderTopValue ? parseFloat(borderTopValue) : 0
-    let paddingTopValue = getComputedStyle(container).getPropertyValue("paddingTop")
-    let paddingTop = paddingTopValue ? parseFloat(paddingTopValue) : 0
-    let containerRect = container.getBoundingClientRect()
-    let itemRect = item.getBoundingClientRect()
-    let offset =
+    const borderTopValue = getComputedStyle(container).getPropertyValue("borderTopWidth")
+    const borderTop = borderTopValue ? parseFloat(borderTopValue) : 0
+    const paddingTopValue = getComputedStyle(container).getPropertyValue("paddingTop")
+    const paddingTop = paddingTopValue ? parseFloat(paddingTopValue) : 0
+    const containerRect = container.getBoundingClientRect()
+    const itemRect = item.getBoundingClientRect()
+    const offset =
       itemRect.top + document.body.scrollTop - (containerRect.top + document.body.scrollTop) - borderTop - paddingTop
-    let scroll = container.scrollTop
-    let elementHeight = container.clientHeight
-    let itemHeight = this.getOuterHeight(item)
+    const scroll = container.scrollTop
+    const elementHeight = container.clientHeight
+    const itemHeight = this.getOuterHeight(item)
 
     if (offset < 0) {
       container.scrollTop = scroll + offset
@@ -411,11 +411,11 @@ export default class DomHandler {
   static calculateScrollbarWidth() {
     if (this.calculatedScrollbarWidth != null) return this.calculatedScrollbarWidth
 
-    let scrollDiv = document.createElement("div")
+    const scrollDiv = document.createElement("div")
     scrollDiv.className = "p-scrollbar-measure"
     document.body.appendChild(scrollDiv)
 
-    let scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
+    const scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth
     document.body.removeChild(scrollDiv)
 
     this.calculatedScrollbarWidth = scrollbarWidth
@@ -425,7 +425,7 @@ export default class DomHandler {
 
   static getBrowser() {
     if (!this.browser) {
-      let matched = this.resolveUserAgent()
+      const matched = this.resolveUserAgent()
       this.browser = {}
 
       if (matched.browser) {
@@ -444,8 +444,8 @@ export default class DomHandler {
   }
 
   static resolveUserAgent() {
-    let ua = navigator.userAgent.toLowerCase()
-    let match =
+    const ua = navigator.userAgent.toLowerCase()
+    const match =
       /(chrome)[ ]([\w.]+)/.exec(ua) ||
       /(webkit)[ ]([\w.]+)/.exec(ua) ||
       /(opera)(?:.*version|)[ ]([\w.]+)/.exec(ua) ||
@@ -464,11 +464,11 @@ export default class DomHandler {
   }
 
   static invokeElementMethod(element, methodName, args) {
-    element[methodName].apply(element, args)
+    element[methodName](...args)
   }
 
   static getFocusableElements(element) {
-    let focusableElements = DomHandler.find(
+    const focusableElements = DomHandler.find(
       element,
       `button:not([tabindex = "-1"]):not([disabled]):not([style*="display:none"]):not([hidden]),
                 [href][clientHeight][clientWidth]:not([tabindex = "-1"]):not([disabled]):not([style*="display:none"]):not([hidden]),
@@ -477,8 +477,8 @@ export default class DomHandler {
                 [contenteditable]:not([tabIndex = "-1"]):not([disabled]):not([style*="display:none"]):not([hidden])`
     )
 
-    let visibleFocusableElements = []
-    for (let focusableElement of focusableElements) {
+    const visibleFocusableElements = []
+    for (const focusableElement of focusableElements) {
       if (
         getComputedStyle(focusableElement).display != "none" &&
         getComputedStyle(focusableElement).visibility != "hidden"

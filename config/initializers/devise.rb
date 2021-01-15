@@ -319,6 +319,7 @@ Devise.setup do |config|
         token = request.headers.fetch('Authorization', '').split(' ').last
         if SessionList.instance.exist(token)
           JsonWebToken.decode(token)
+          puts token
           success! SessionList.instance.get(token)
         else 
           fail! 'session invalidate'

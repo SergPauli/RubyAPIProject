@@ -17,7 +17,7 @@
 @font-face {
   font-family: Favorit;
   font-style: oblique;
-  font-weight: 400;
+  font-weight: 600;
   font-display: block;
   src: local("FavoritC-Bold"), local("FavoritC-Bold"), url("../fonts/FavoritC-Bold.otf") format("opentype");
 }

@@ -9,8 +9,20 @@ class Api::V1::UniversalApiController < ApiController
       select_list = permitted_select_values
       @res = @res.select(select_list) if select_list
       @res = @res.ransack(params[:q]).result
-      
-      render json: @res
+      if params[:include]        
+        @resultes = @res.includes(get_includes_model)
+        #model_association = @model_class.reflect_on_all_associations(get_includes_model)
+        # @resultes.each do |t|        
+        #   field = params[:include]
+        #   val = t.send(field)
+        #   t.send("#{field}=", val)
+        # end
+        render json: @resultes  
+      else
+        @res = @res.count  if params[:count]     
+        render json: @res
+      end
+      # @res = @res.ransack(params[:q]).result
     end
     def show       
       select_list = permitted_select_values
@@ -67,7 +79,7 @@ class Api::V1::UniversalApiController < ApiController
       def get_model_name
         params[:model_name] || controller_name.classify
       end
-      
+
       def prepare_model
         model_name = get_model_name
         raise "Model class not present" if model_name.nil? || model_name.strip == ""
@@ -76,7 +88,18 @@ class Api::V1::UniversalApiController < ApiController
         
         raise "Model class is not ActiveRecord" unless @model_class < ActiveRecord::Base
       end
-      
+
+      def get_includes_model
+        if params[:include]
+          case params[:include]
+          when String            
+           params[:include].to_sym 
+          when Array
+            params[:include].map { |model| model.to_sym }
+          end        
+        end
+      end
+
       def find_record
         @res = @model_class.find(params[@model_class.primary_key.to_sym])
       end

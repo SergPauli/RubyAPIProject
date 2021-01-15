@@ -23,6 +23,12 @@ const routes: Array<RouteRecordRaw> = [
     meta: { layout: "login" },
     component: Login,
   },
+  {
+    path: "/Items/People",
+    name: "People",
+    meta: { layout: "main", requiresAuth: true },
+    component: () => import(/* webpackChunkName: "about" */ "../views/Items/People.vue"),
+  },
 ]
 
 const router = createRouter({
