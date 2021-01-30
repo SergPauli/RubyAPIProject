@@ -30,32 +30,29 @@
 
 <script>
 export default {
-  mame: "ActionBar",
-  data() {
-    return {
-      home: { icon: "pi pi-home", to: "/" },
-    };
-  },
+  mame: "ActionBar",  
   computed: {
     items() {
       const tmp = [];
-      if (this.$route.matched) {
-        this.$route.matched.forEach((link) => {
-          //console.log(JSON.stringify(link));
-          if (link.name!="Home") tmp.push(Object.assign({ to: link.path }, {label: link.name}));
-        });
-      }
-      return tmp;
+      if (this.$route.matched) {        
+        const last = this.$route.matched.slice(-1)[0]
+        this.$route.matched.forEach((link) => {                   
+          if (link.name!="Home" && link!=last) tmp.push(Object.assign({ to: link.path }, {label: link.name}))          
+        })
+        if (last.name!="Home") tmp.push(Object.assign({label: last.name}, {disabled: true}))
+      }          
+      return tmp
     },
-  },
-  //   methods: {
-  //     home() {
-  //       this.$router.push({
-  //         path: "/",
-  //       });
-  //     },
-  //   },
-};
+    home() { 
+      let home = { label: "Home",  disabled: true }
+      if (this.$route.matched) {        
+        const last = this.$route.matched.slice(-1)[0]        
+        if (last.name!="Home")  home = {label: "Home", to: "/" }
+      }          
+      return home
+    }
+  },  
+}
 </script>
 
 <style></style>

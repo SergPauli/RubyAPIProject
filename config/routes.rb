@@ -1,7 +1,8 @@
 Rails.application.routes.draw do 
-      devise_for :users, controllers: { registrations: 'registrations' }
+  devise_for :users, controllers: { registrations: 'registrations', sessions: 'api/auth/sessions' }  
+  #get 'users/sign_in.json', to: 'api/auth/sessions#new' 
   get 'authenications/devise'
-    devise_scope :user do
+    devise_scope :user do                          
       post 'api/sign_up', to: 'api/auth/registrations#create'
       post 'api/sign_in', to: 'api/auth/sessions#create'
       delete 'api/sign_out', to: 'api/auth/sessions#destroy'

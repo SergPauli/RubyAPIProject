@@ -386,7 +386,7 @@ export default {
       this.loading= true
       this.personService.getPeople(params)
       .then((data) => {
-        console.log(data)
+        //console.log(data)
         this.people = data
         this.loading = false
         this.lazyTotalRecords = this.people.length

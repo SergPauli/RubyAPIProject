@@ -1,6 +1,6 @@
 <template>
   <div :class="containerClass">
-    <div class="layout-content-wrapper">
+    <div class="layout-content-wrapper" @click="onDocumentClick">
       <TopBar
         @topbar-item-click="onTopbarItemClick"
         @menubutton-click="onMenuButtonClick"

@@ -278,7 +278,7 @@ Devise.setup do |config|
   # change the failure app, you can configure them inside the config.warden block.
   #
    config.warden do |manager|
-  #  manager.intercept_401 = false
+     #manager.intercept_401 = false
      manager.strategies.add :jwt, Devise::Strategies::JWT
      manager.default_strategies(scope: :user).unshift :jwt
    end
@@ -319,17 +319,19 @@ Devise.setup do |config|
         token = request.headers.fetch('Authorization', '').split(' ').last
         if SessionList.instance.exist(token)
           JsonWebToken.decode(token)
-          puts token
           success! SessionList.instance.get(token)
-        else 
-          fail! 'session invalidate'
+        else          
+          puts 'session invalidate ', token
+          return false
         end         
       rescue ::JWT::ExpiredSignature        
-          SessionList.instance.remove(token)        
-          fail! 'Auth token has expired'
-      rescue ::JWT::DecodeError
-        fail! 'Auth token is invalid' 
-      end
+          SessionList.instance.remove(token) 
+          puts   'Auth token has expired ', token             
+          return false 
+      rescue ::JWT::DecodeError 
+        puts   'Auth token is invalid ', token
+        return false
+      end        
     end
   end
   end

@@ -1,14 +1,13 @@
 import { createStore } from "vuex"
 import authService from "@/service/authService"
 const savedUser  = localStorage.getItem("user") || "{}"
-console.log("savedUser:", savedUser)
 export default createStore({
   state: {
     message: {},
     status: "",
     session: {
       token: localStorage.getItem("token") || "",
-      user: savedUser ? {} : JSON.parse(savedUser),
+      user: savedUser === "{}" ? {} : JSON.parse(savedUser),
     },
   },
   mutations: {
@@ -51,9 +50,9 @@ export default createStore({
         .then((response) => commit("logout", response))
         .catch((error) => commit("message", { severity: "error", summary: "Error", detail: error.message }))
     },
-    error401({ commit }) {
-      commit("logout")
-      commit("message", { message: { severity: "error", summary: "Access denied", detail: "Unauthorized" } })
+    error401({ commit }, data) {
+      commit("logout", data)
+      //commit("message", { message: { severity: "error", summary: "Access denied", detail: "Unauthorized" } })
     },
     putMessage({ commit }, message) {
       commit("message", message)
@@ -63,7 +62,7 @@ export default createStore({
     },
   },
   getters: {
-    isLoggedIn: (state) => !!state.session.token,
+    isLoggedIn: (state) => state.session.token != "",
     authStatus: (state) => state.status,
     token: (state) => state.session.token,
     user: (state) => state.session.user,

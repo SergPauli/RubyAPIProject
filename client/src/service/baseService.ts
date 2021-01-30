@@ -24,12 +24,11 @@ export default class BaseService {
       },
       function(error) {        
         // Any status codes that falls outside the range of 2xx cause this function to trigger
-        // Do something with response error       
-        return new Promise(function(resolve, reject) {
-          if (error.message.includes("401") && error.config && !error.config.__isRetryRequest) {            
-            store.dispatch("error401")            
-          }
-          throw error
+        // Do something with response error             
+        return new Promise(function(resolve, reject) {                    
+          if (error.message ==='Request failed with status code 401') {            
+            store.dispatch("error401", error)            
+          } else throw error          
         })
       }
     )

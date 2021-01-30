@@ -16,6 +16,7 @@ import Textarea from "primevue/textarea"
 import Button from "primevue/button"
 import FileUpload from "primevue/fileupload"
 import Checkbox from "primevue/checkbox"
+import ProgressSpinner from "primevue/progressspinner"
 import "./assets/styles/layout-madrid.css"
 import "./assets/styles/theme-bluegray.css"
 import "primeicons/primeicons.css"
@@ -39,5 +40,6 @@ app.component("Textarea", Textarea)
 app.component("Button", Button)
 app.component("FileUpload", FileUpload)
 app.component("Checkbox", Checkbox)
+app.component("ProgressSpinner", ProgressSpinner)
 app.mount("#app")
 

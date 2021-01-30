@@ -4,7 +4,12 @@ class Api::Auth::SessionsController < Devise::SessionsController
   prepend_before_action :require_no_authentication, only: [:new, :create]
   before_action  :load_messages
   
-  attr_accessor :message  
+  attr_accessor :message 
+
+  # get /resource/sign_in.json 
+  def new
+     render json: {error: 'session not found'}, status: 401
+  end
   # POST /resource/sign_in
   def create      
     if  params[:email] 
@@ -48,7 +53,6 @@ class Api::Auth::SessionsController < Devise::SessionsController
 
    def respond_to_on_destroy
     
-   end
+   end   
    
-     
 end

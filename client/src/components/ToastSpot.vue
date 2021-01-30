@@ -2,7 +2,6 @@
   <Toast /> 
 </template>
 <script >
-import { useToast } from "primevue/usetoast"
 import { mapState } from "vuex"
 export default  {   
   computed: mapState(['message']),
@@ -14,7 +13,7 @@ export default  {
       (state, getters) => getters.message,
       (newValue, oldValue) => {
         //console.log(`Updating from ${JSON.stringify(oldValue)} to ${JSON.stringify(newValue)}`) 
-        if (newValue.detail && this.$store.state.status==="") this.showMessage(newValue)
+        if (newValue.detail && (this.$store.state.status==="" || (this.$store.state.status==="loading"))) this.showMessage(newValue)
       },
     )
   },
