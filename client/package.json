@@ -45,20 +45,20 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/vue3-essential",
+      "plugin:vue/vue3-essential",      
       "eslint:recommended",
       "@vue/typescript/recommended",
       "@vue/prettier",
-      "@vue/prettier/@typescript-eslint"
+      "@vue/prettier/@typescript-eslint",
+      "plugin:vue/base",
+      "plugin:vue/vue3-strongly-recommended"
+
     ],
     "parserOptions": {
       "ecmaVersion": 2020
     },
     "rules": {
-      "semi": [
-        "warn",
-        "never"
-      ]
+      "semi": 0
     }
   },
   "proxy": "http://localhost:5000",

@@ -17,16 +17,21 @@ import Button from "primevue/button"
 import FileUpload from "primevue/fileupload"
 import Checkbox from "primevue/checkbox"
 import ProgressSpinner from "primevue/progressspinner"
+//import Chips from "primevue/chips"
+import Tooltip from "@/components/Tooltip/Tooltip"
+import "@/components/Tooltip/Tooltip.css"
 import "./assets/styles/layout-madrid.css"
 import "./assets/styles/theme-bluegray.css"
 import "primeicons/primeicons.css"
 import "primeflex/primeflex.css"
+import "@/components/Tooltip/Tooltip.css"
 import store from "./store"
 const app = createApp(App);
 app.use(store)
 app.use(router)
 app.use(PrimeVue)
 app.use(ToastService)
+app.directive("tooltip", Tooltip)
 app.component("InputText", InputText)
 app.component("Password", Password)
 app.component("Toast", Toast)
@@ -41,5 +46,6 @@ app.component("Button", Button)
 app.component("FileUpload", FileUpload)
 app.component("Checkbox", Checkbox)
 app.component("ProgressSpinner", ProgressSpinner)
+//app.component("Chips", Chips)
 app.mount("#app")
 

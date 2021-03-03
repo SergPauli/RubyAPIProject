@@ -134,7 +134,6 @@
 </template>
 <script>
 import { defineComponent } from "vue";
-import DomHandler from "../utils/DomHanler";
 export default defineComponent({
   emits: ["topbar-item-click", "menubutton-click", "topbar-menubutton-click"],
   props: {

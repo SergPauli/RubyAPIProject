@@ -1,7 +1,6 @@
 class Api::V1::UniversalApiController < ApiController    
     before_action :prepare_model, only: [:index, :show, :create, :update, :destroy]
-    before_action :find_record, only: [:update, :destroy]
-    
+    before_action :find_record, only: [:update, :destroy]    
     def index
       @res = @model_class
       @res = @res.limit(params[:limit].to_i) if params[:limit]
@@ -9,20 +8,21 @@ class Api::V1::UniversalApiController < ApiController
       select_list = permitted_select_values
       @res = @res.select(select_list) if select_list
       @res = @res.ransack(params[:q]).result
-      if params[:include]        
-        @resultes = @res.includes(get_includes_model)
-        #model_association = @model_class.reflect_on_all_associations(get_includes_model)
-        # @resultes.each do |t|        
-        #   field = params[:include]
-        #   val = t.send(field)
-        #   t.send("#{field}=", val)
-        # end
-        render json: @resultes  
+      if params[:include] 
+        resultes_arr = Array.new       
+        @resultes = @res.includes get_includes_model 
+        @resultes.each do |r|
+          if @model_class.nested_select_params 
+            resultes_arr.push r.as_json include: @model_class.nested_select_params           
+          else
+            resultes_arr.push r.as_json include: get_includes_model 
+          end           
+        end
+        render json: resultes_arr    
       else
         @res = @res.count  if params[:count]     
-        render json: @res
-      end
-      # @res = @res.ransack(params[:q]).result
+        render json: @res  
+      end     
     end
     def show       
       select_list = permitted_select_values
@@ -36,8 +36,8 @@ class Api::V1::UniversalApiController < ApiController
         invalid_resource!(@res)
       end
     end
-    def update
-      if @res.update_attributes(permitted_params)
+    def update      
+      if @res.update(permitted_params)
         render json: @res
       else
         invalid_resource!(@res)
@@ -57,7 +57,7 @@ class Api::V1::UniversalApiController < ApiController
             permitted_select_value params[:select]
           when Array
             params[:select].map { |field| permitted_select_value field }.compact
-          end
+          end        
         end
       end
       
@@ -67,15 +67,30 @@ class Api::V1::UniversalApiController < ApiController
       end
       
       def extra_select_values
+       if (params[:extselect]) 
+         params[:extselect] 
+       else 
         []
+       end        
       end
       
-      def permitted_params
-        params.permit![_wrapper_options.name]
-        params[_wrapper_options.name].extract! @model_class.primary_key
-        params[_wrapper_options.name]
+      def permitted_params  
+        nested  = params[:permitted].find {|key| key.include? "_attributes"}    
+        permitted =  get_permitted_names.concat(@model_class.nested_attributes) if nested     
+        params.permit(permitted) 
       end
       
+      def get_permitted_names
+        if params[:permitted]
+          case params[:permitted]
+          when String            
+            params[:permitted].to_sym 
+          when Array
+            params[:permitted].map { |param| param.to_sym}
+          end           
+        end        
+      end
+
       def get_model_name
         params[:model_name] || controller_name.classify
       end

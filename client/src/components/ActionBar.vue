@@ -37,9 +37,9 @@ export default {
       if (this.$route.matched) {        
         const last = this.$route.matched.slice(-1)[0]
         this.$route.matched.forEach((link) => {                   
-          if (link.name!="Home" && link!=last) tmp.push(Object.assign({ to: link.path }, {label: link.name}))          
+          if (last && link.name!="Home" && link!=last) tmp.push(Object.assign({ to: link.path }, {label: link.name}))          
         })
-        if (last.name!="Home") tmp.push(Object.assign({label: last.name}, {disabled: true}))
+        if (last && last.name!="Home") tmp.push(Object.assign({label: last.name}, {disabled: true}))
       }          
       return tmp
     },
@@ -47,7 +47,7 @@ export default {
       let home = { label: "Home",  disabled: true }
       if (this.$route.matched) {        
         const last = this.$route.matched.slice(-1)[0]        
-        if (last.name!="Home")  home = {label: "Home", to: "/" }
+        if (last && last.name!="Home")  home = {label: "Home", to: "/" }
       }          
       return home
     }

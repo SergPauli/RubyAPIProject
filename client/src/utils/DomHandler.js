@@ -72,11 +72,11 @@ export default class DomHandler {
 
   static getViewport() {
     const win = window,
-          d = document,
-          e = d.documentElement,
-          g = d.getElementsByTagName("body")[0],
-          w = win.innerWidth || e.clientWidth || g.clientWidth,
-          h = win.innerHeight || e.clientHeight || g.clientHeight
+      d = document,
+      e = d.documentElement,
+      g = d.getElementsByTagName("body")[0],
+      w = win.innerWidth || e.clientWidth || g.clientWidth,
+      h = win.innerHeight || e.clientHeight || g.clientHeight
 
     return { width: w, height: h }
   }
@@ -192,7 +192,8 @@ export default class DomHandler {
     const windowScrollTop = this.getWindowScrollTop()
     const windowScrollLeft = this.getWindowScrollLeft()
     const viewport = this.getViewport()
-    let top, left
+    let top = 0
+    let left= 0
 
     if (targetOffset.top + targetOuterHeight + elementOuterHeight > viewport.height) {
       top = targetOffset.top + windowScrollTop - elementOuterHeight
@@ -505,5 +506,15 @@ export default class DomHandler {
       this.hasClass(element.parentElement, "p-checkbox") ||
       this.hasClass(element.parentElement, "p-radiobutton")
     )
+  }
+
+  static applyStyle(element, style) {
+    if (typeof style === "string") {
+      element.style.cssText = this.style
+    } else {
+      for (const prop in this.style) {
+        element.style[prop] = style[prop]
+      }
+    }
   }
 }
