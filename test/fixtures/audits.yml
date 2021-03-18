@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  guid: MyString
+  action: 1
+  field: MyString
+  detail: MyString
+  before: MyString
+  after: MyString
+  severity: MyString
+  summary: MyString
+  user: 
+
+two:
+  guid: MyString
+  action: 1
+  field: MyString
+  detail: MyString
+  before: MyString
+  after: MyString
+  severity: MyString
+  summary: MyString
+  user: 

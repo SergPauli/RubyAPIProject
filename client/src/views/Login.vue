@@ -45,6 +45,7 @@ export default defineComponent({
         const data = {
           login: this.username,
           password: this.password,
+          router:  this.$router
         };
         this.$store.dispatch("login", data).then((result) => {
           this.$router.push("/");

@@ -75,9 +75,9 @@
           <Column field="middlename" header="Middlename" :sortable="true"> <template #loading>
                 <span class="loading-text"></span>
             </template></Column>
-          <Column  field="contacts" header="Contacts" class="p-d-none p-d-md-inline-flex"
-          > <template #body="slotProps">
-              {{slotProps.data.contacts[0].data}}
+          <Column  field="contacts" header="Contacts" class="p-d-none p-d-md-inline-flex"> 
+            <template #body="slotProps">
+              {{getContactName(slotProps.data)}}
             </template>
           </Column>
           <Column :exportable="false">
@@ -95,7 +95,7 @@
             </template>
           </Column>
           <template #footer>
-            In total there are {{people ? people.length : 0 }} persons.
+            In total there are {{lazyTotalRecords}} persons.
           </template>
         </DataTable>
       </div>
@@ -108,7 +108,8 @@
         :modal="true"
         class="p-fluid"
       >
-        <div class="p-field p-grid">
+      <div class="p-formgrid p-grid">
+        <div class="p-field  p-col-12 p-md-6">
           <label for="name">Name</label>
           <InputText
             id="name"
@@ -123,7 +124,7 @@
             >Name is required.</small
           >
         </div>
-        <div class="p-field p-grid">
+        <div class="p-field  p-col-12 p-md-6">
           <label for="surname">Surname</label>
           <InputText
             id="surname"
@@ -137,41 +138,72 @@
             >Surname is required.</small
           >
         </div>
-        <div class="p-field p-grid">
+      
+        <div class="p-field p-col-12">
           <label for="middlename">Middlename</label>
           <InputText
-            id="middlename"
-            v-tooltip.top="'Enter your username'"
+            id="middlename"            
             v-model.trim="person.middlename"
             @change="request.middlename = person.middlename"
-            @keyup.enter="onNext('middlename','description')"                        
+            @keyup.enter="onNext('middlename','contactData')"                        
             :class="{ 'p-invalid': submitted && !person.middlename }"
           />
           <small class="p-invalid" v-if="submitted && !person.middlename"
             >Middlename is required.</small
           >
         </div>
-        <div class="p-field p-grid">
+        <div class="p-field p-col-12"  > 
+          <label for="contactData">Contacts list:</label>           
+          <div class="p-grid " :style="{paddingTop: '0.6rem', background: 'rgb(233 245 249)' }">
+            <div class="p-field p-col-12 p-md-7">                          
+              <InputText id="contactData" type="text" @keyup.enter="onNext('contactData','contactDescription')"  v-model.trim="contact.data" placeholder="New contact" />
+            </div>
+            <div class="p-field p-col-12 p-md-5">              
+              <Dropdown id="contactType"  v-model="contact.type" :showClear="true"
+              :options="contactTypes" optionLabel="name" 
+              placeholder="Select type" >
+              <template #value="slotProps">
+                <div class="contact-item" v-if="slotProps.value">
+                  <span :class="slotProps.value.icon" ></span>
+                  <div class="contact-item-value">{{slotProps.value.name}}</div>
+                </div>
+                <span v-else>{{slotProps.placeholder}} </span>
+              </template>
+              <template #option="slotProps">
+              <div class="contact-item">
+                <span :class="slotProps.option.icon" ></span>
+                <div class="contact-item-value">{{slotProps.option.name}}</div>
+              </div>
+              </template>
+              </Dropdown>
+            </div>
+            <div class="p-field p-col-8 p-md-10">              
+              <InputText id="contactDescription" @keyup.enter="onNext('contactDescription','bt_add')"   type="text" v-model.trim="contact.description" placeholder="New contact description" />
+            </div>
+            <div class="p-field p-col-4 p-md-1">
+              <Button id="bt_add" icon="pi pi-plus" v-tooltip.top="'Add new contact'" 
+              class="p-button  p-mr-2 p-mb-2 p-button-success" :style="{margin:'0 -0.5rem'}"
+              @click="onAddContact" :disabled="isValidContact"/>            
+            </div>  
+            <div  class="p-field  p-ai-center  p-col-12">	          
+	            <Chip v-for="(contact) in person.contacts" :label="contact.data" :icon="contactIcon(contact.type)" :link="contactLinc(contact)"   :key="contact.data"
+              removable v-tooltip.top="contact.description" @remove="onRemoveContact(contact)"/>
+            </div>
+          </div>  
+        </div>  
+        <div class="p-field p-col-12">
           <label for="description">Description</label>
           <Textarea
-            id="description"
-            v-tooltip.top="'Enter your username'"
+            id="description"            
             v-model="person.description"
             @change="request.description = person.description"
             @keyup.enter="onNext('description','Save')"
             required="true"
-            rows="3"
-            cols="20" 
+            rows="2"
+            cols="40" 
           />
-        </div>
-        <div class="p-field p-grid"> 
-          <label for="contacts">Контакты</label>
-          <Button icon="pi pi-plus" class="p-button  p-button-rounded p-mr-2 p-mb-2 p-button-success" :style="{margin:'0 0.5rem'}"/>            
-          <div  class="p-d-flex p-ai-center" v-for="(contact) in person.contacts" :key="contact.id">	          
-	          <Chip :label="contact.data" :icon="contactIcon(contact.type)" 
-            removable v-tooltip.top="contact.description" @remove="onRemoveContact(contact.id)"/>
-          </div>
-        </div>  
+        </div> 
+      </div>        
         <template #footer>
           <Button
             label="Cancel"
@@ -249,6 +281,9 @@
 <script>
 import PersonService from "@/service/personService"
 import Chip from "@/components/Chip/Chip.vue"
+const regexPhone =/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+const regexPhone2 =/\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})? ?(\w{1,10}\s?\d{1,6})?/;
+const regexMail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 export default {
   data() {
     return {
@@ -261,10 +296,12 @@ export default {
       contacts: [],
       selectedPeople: null,
       filters: {},
+      contact:{data:"", type:null, description:""},
+      contactTypes: [{name:"Email", icon:"pi pi-envelope"},{name:"Phone", icon:"pi pi-phone"}, {name:"Fax",icon:"pi pi-print"} ], 
       request: {permitted: []},
       filter: null,
       first: 0,
-      rows: 6,
+      rows: 8,
       submitted: false,
       lazyTotalRecords: 0,
       virtualRowHeight: 48
@@ -277,46 +314,61 @@ export default {
   },
   personService: null,
   created() {
-    this.personService = new PersonService();
+    this.personService = new PersonService(this.$router);
   },
   mounted() {
     this.getCount()       
   },
   methods: {
-    onRemoveContact(id){      
+    getContactName(person) {
+      if (person.contacts === undefined || person.contacts.length == 0) return ""
+      let result = person.contacts[0].data
+      if (person.contacts.length > 1) result = result +"..." 
+      return result
+    },
+    onRemoveContact(contact){      
       const contactsAttributes= [] 
       const destroy = {_destroy : '1'}  
-      this.person.contacts.filter(contact => contact.id === id)
-      .map(contact=>{ destroy.id = contact.id
+      if (contact.id) {
+        this.person.contacts.filter(c => contact.id === c.id)
+            .map(d=>{ destroy.id = d.id
                       contactsAttributes.push(destroy)})         
-      if (this.request['contacts_attributes']) this.request['contacts_attributes'].concat(contactsAttributes)
-      else  this.request['contacts_attributes'] = contactsAttributes
-      this.person.contacts = this.person.contacts.filter(contact => contact.id !== id) 
+            if (this.request['contacts_attributes']) this.request['contacts_attributes'].concat(contactsAttributes)
+            else  this.request['contacts_attributes'] = contactsAttributes
+            this.person.contacts = this.person.contacts.filter(c => contact.id !== c.id)
+      } else Object.keys(this.request).filter(key => key.includes("_attributes"))
+        .forEach(key => {
+          this.request[key] = this.request[key].filter(e=>e.data != contact.data)
+          if (this.request[key]===[]) this.request.permitted = this.request.permitted.filter(e=>e != key)
+        })            
     },
-    onAddContact(params){      
-      const contact = {
-        data: params.value[params.value.length - 1],        
+    onAddContact() {      
+      const newContact = {
+        data: this.contact.data, description: this.contact.description      
+      }       
+      if ((this.contact.type && this.contact.type.name==="Phone") || regexPhone.test(newContact.data) || regexPhone2.test(newContact.data) || newContact.data.includes("tel:")) {               
+          if (this.request.phones_attributes) this.request.phones_attributes.push(newContact)
+          else  this.request['phones_attributes'] = [newContact]
+          if (this.contact.type === null) newContact.type = "Phone"
+      } else if ((this.contact.type && this.contact.type.name==="Email") || regexMail.test(newContact.data)) {          
+          if (this.request.emails_attributes) this.request.emails_attributes.push(newContact)
+          else  this.request['emails_attributes'] = [newContact]
+          if (this.contact.type === null) newContact.type = "Email"
+      } else if ((this.contact.type && this.contact.type.name==="Fax")) {          
+          if (this.request.faxes_attributes) this.request.faxes_attributes.push(newContact)
+          else  this.request['faxes_attributes'] = [newContact]          
       } 
-      const regexPhone ="^\\+\\d{2}\\(\\d{3}\\)\\d{3}-\\d{2}-\\d{2}$"
-      const regexMail = "/^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$"
-      if (contact.data.match(regexPhone)!==null || contact.data.includes("tel:")) {               
-          if (this.request.phones_attributes) this.request.contacts_attributes.push(contact)
-          else  this.request['phones_attributes'] = [contact]
-      } else if (contact.data.match(regexMail)!==null) {          
-          if (this.request.emails_attributes) this.request.contacts_attributes.push(contact)
-          else  this.request['emails_attributes'] = [contact]
-      } else if (contact.data.includes("fax:")) {          
-          if (this.request.faxes_attributes) this.request.contacts_attributes.push(contact)
-          else  this.request['faxes_attributes'] = [contact]
-      } 
-      this.person.contacts.push(contact)     
+      if (newContact.type === undefined && this.contact.type) newContact.type = this.contact.type.name
+      this.person.contacts.push(newContact) 
+      this.contact =  {data:"", type:null, description:""}   
     },
     onNext(currentId,nextId) {
       document.getElementById(currentId).blur(); 
       document.getElementById(nextId).focus();
-    },    
+    },
+       
     openNew() {
-      this.person = {}
+      this.person = {contacts:[]}
       this.contacts = [] 
       this.submitted = false
       this.personDialog = true      
@@ -329,7 +381,7 @@ export default {
       this.submitted = true;
       //console.log("permitted",JSON.stringify(this.request.permitted))
       Object.keys(this.request).forEach(key => {
-        if (key!=="permitted") this.request.permitted.push(key)
+        if (key!=="permitted" ) this.request.permitted.push(key)
       })      
       if (this.request.permitted.length > 0 ) {
         if (this.person.id) { 
@@ -343,21 +395,35 @@ export default {
                 detail: "Person Updated",
                 life: 3000,
               }); 
-              this.request = {permitted: []}                  
+              this.request = {permitted: []} 
+              this.people = this.people.filter(p=>p.id != this.person.id ) 
+              this.people.push(data)               
             }).catch((error)=>this.$store.dispatch("putMessage", {severity:"error", detail: error.message, summary:"Error" }));          
         } else {
-          this.person.id = this.createId();
-          this.person.image = "person-placeholder.svg";
-          this.people.push(this.person);
-          this.$toast.add({
-            severity: "success",
-            summary: "Successful",
-            detail: "person Created",
-            life: 3000,
-          });
+          this.loading= true              
+          this.personService.create(this.request)
+            .then((data) => {        
+              this.loading = false
+              this.$toast.add({
+                severity: "success",
+                summary: "Successful",
+                detail: "Person Added",
+                life: 3000,
+              }); 
+              this.request = {permitted: []} 
+              if (data.contacts===undefined) data.contacts=[]
+              this.people.push(data)                 
+            }).catch((error)=>this.$store.dispatch("putMessage", {severity:"error", detail: error.message, summary:"Error" }));
         }
         this.personDialog = false;
         this.person = {};
+      } else {
+        this.$toast.add({
+            severity: "info",
+            summary: "Decline",
+            detail: "There is no changes",
+            life: 3000,
+          });
       }
     },    
     editPerson(person) {
@@ -428,7 +494,7 @@ export default {
       this.personService.getPeople(params)
       .then((data) => {        
         this.loading = false
-        this.lazyTotalRecords = data
+        this.lazyTotalRecords = data        
         if ((this.lazyTotalRecords - this.rows) < 1) this.loadChunk(0, this.rows)
         else  this.loadChunk(0, this.rows * 2)  
       })
@@ -449,27 +515,35 @@ export default {
       this.loading= true
       this.personService.getPeople(params)
       .then((data) => {
-        console.log(data)
+        //console.log(data)
         this.people = data
-        this.loading = false
-        this.lazyTotalRecords = this.people.length
+        this.loading = false        
       })
       .catch((error)=>this.$store.dispatch("putMessage", {severity:"error", detail: error.message, summary:"Error" }));
     },
-    onVirtualScroll(event) {      
-      if (event.first === this.lazyTotalRecords - this.rows) this.loadChunk(event.first, this.rows)
-      else  this.loadChunk(event.first, event.rows);      
-      
+    onVirtualScroll(event) { 
+      const  index =   this.lazyTotalRecords - this.rows      
+      console.log('first', this.first) 
+      console.log('event.first', event.first)
+      if (this.first == event.first && event.first <  index) this.loadChunk(event.first, this.rows*2)
+      this.first = event.first
     },
-    contactIcon(type){
-      switch (type) {
-        case "Email": return "pi pi-envelope"
-        case "Phone": return "pi pi-phone"
-      }  
+    contactIcon(type) {
+      return this.contactTypes.find(el => el.name===type).icon       
+    },
+    contactLinc(contact) {
+      if (contact.data && contact.type) {
+        if (contact.type==="Email") return "mailto:"+contact.data
+        else if(contact.type==="Phone") return "tel:"+contact.data
+      } else return false            
     }
+
   },
   computed: {
-    
+    isValidContact() {
+      return !(this.contact.data && (this.contact.type || (regexPhone.test(this.contact.data) 
+      || regexPhone2.test(this.contact.data)  || regexMail.test(this.contact.data))))
+    }, 
   },
   components: {   
     Chip
@@ -550,6 +624,19 @@ export default {
     animation: pulse 1s infinite ease-in-out;
     text-indent: -99999px;
     overflow: hidden;
+}
+.contact-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: #055160;
+}
+.contact-item .contact-item-value {  
+  margin-left: 0.4rem;
+  color: #565e5d;
 }
 
 </style>

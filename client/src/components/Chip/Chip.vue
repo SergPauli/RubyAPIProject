@@ -3,7 +3,10 @@
         <slot>
             <img :src="image" v-if="image">
             <span :class="iconClass" v-else-if="icon"></span>
-            <div class="p-chip-text" v-if="label">{{label}}</div>
+            <div class="p-chip-text" v-if="label">
+                <a v-if="link" :href="link" target="_blank"> {{label}}</a>
+                 <span  v-else>  {{label}}  </span>
+            </div>
             <span v-if="removable" tabindex="0" :class="removeIconClass" 
                 @click="close" @keydown.enter="close"></span>
         </slot>
@@ -15,6 +18,10 @@ export default {
     emits: ['remove'],
     props: {
         label: {
+            type: String,
+            default: null
+        },
+        link: {
             type: String,
             default: null
         },
@@ -66,6 +73,8 @@ export default {
 .p-chip {
     display: inline-flex;
     align-items: center;
+    margin-right: 0.2rem;
+    margin-bottom: 0.2rem;
 }
 .p-chip-text {
     line-height: 1.5;
@@ -81,4 +90,6 @@ export default {
 .p-chip img {
     border-radius: 50%;
 }
+
+
 </style>

@@ -26,10 +26,9 @@ export default createStore({
       state.session.token = ""
       state.status = "Exit"
       state.message = { severity: "success", summary: "success", detail: data.message }
-      localStorage.removeItem("token")
+      localStorage.removeItem("token")      
     },
-    message(state, message) {
-      console.log("state.message:", message)
+    message(state, message) {      
       state.message = message
     },
     clear(state) {
@@ -40,17 +39,17 @@ export default createStore({
   actions: {
     login({ commit }, data) {
       commit("loading")
-      return new authService().login(data).then((response) => commit("login", response))
+      return new authService(data.router).login(data).then((response) => commit("login", response))
       //.catch((error)=>commit("error", error.message))
     },
     logout({ commit }, data) {
       commit("loading")
-      return new authService()
+      return new authService(data.router)
         .logout()
         .then((response) => commit("logout", response))
         .catch((error) => commit("message", { severity: "error", summary: "Error", detail: error.message }))
     },
-    error401({ commit }, data) {
+    error401({ commit }, data) {      
       commit("logout", data)
       //commit("message", { message: { severity: "error", summary: "Access denied", detail: "Unauthorized" } })
     },

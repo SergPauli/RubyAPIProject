@@ -158,7 +158,7 @@ export default defineComponent({
       this.$emit("menubutton-click", event);
     },
     logoutHandler() {
-      this.$store.dispatch("logout").then((result) => this.$router.push("/login"));
+      this.$store.dispatch("logout", {router: this.$router}).then((result) => this.$router.push("/login"));
     },
     onTopbarMenuButtonClick: function (event) {
       this.$emit("topbar-menubutton-click", event);

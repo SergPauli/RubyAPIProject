@@ -16,6 +16,7 @@ import Textarea from "primevue/textarea"
 import Button from "primevue/button"
 import FileUpload from "primevue/fileupload"
 import Checkbox from "primevue/checkbox"
+import Dropdown from "primevue/dropdown"
 import ProgressSpinner from "primevue/progressspinner"
 //import Chips from "primevue/chips"
 import Tooltip from "@/components/Tooltip/Tooltip"
@@ -46,6 +47,7 @@ app.component("Button", Button)
 app.component("FileUpload", FileUpload)
 app.component("Checkbox", Checkbox)
 app.component("ProgressSpinner", ProgressSpinner)
+app.component("Dropdown", Dropdown)
 //app.component("Chips", Chips)
 app.mount("#app")
 

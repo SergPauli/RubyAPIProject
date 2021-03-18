@@ -18,27 +18,28 @@ class Api::V1::UniversalApiController < ApiController
             resultes_arr.push r.as_json include: get_includes_model 
           end           
         end
-        render json: resultes_arr    
+        render json: {status: 200, data: resultes_arr}   
       else
         @res = @res.count  if params[:count]     
-        render json: @res  
+        render json: {status: 200, data: @res}  
       end     
     end
     def show       
       select_list = permitted_select_values
       @res =  @model_class.select(select_list).find(params[@model_class.primary_key.to_sym]) if select_list      
-      render json: @res
+      puts "ere"
+      render json: {status: 200, data: @res}
     end
     def create
       if @res = @model_class.create(permitted_params)
-        render json: @res
+        render json: {status: 200, data: @res} 
       else
         invalid_resource!(@res)
       end
     end
     def update      
       if @res.update(permitted_params)
-        render json: @res
+        render json: {status: 200, data: @res}
       else
         invalid_resource!(@res)
       end
@@ -75,8 +76,9 @@ class Api::V1::UniversalApiController < ApiController
       end
       
       def permitted_params  
-        nested  = params[:permitted].find {|key| key.include? "_attributes"}    
-        permitted =  get_permitted_names.concat(@model_class.nested_attributes) if nested     
+        nested  = params[:permitted].find {|key| key.include? "_attributes"}  
+        permitted =  get_permitted_names
+        permitted =  permitted.concat(@model_class.nested_attributes) if nested     
         params.permit(permitted) 
       end
       
@@ -92,11 +94,12 @@ class Api::V1::UniversalApiController < ApiController
       end
 
       def get_model_name
+        raise "Model User can not be used for that" if params[:model_name] == "User"
         params[:model_name] || controller_name.classify
       end
 
       def prepare_model
-        model_name = get_model_name
+        model_name = get_model_name        
         raise "Model class not present" if model_name.nil? || model_name.strip == ""
         
         @model_class = model_name.constantize

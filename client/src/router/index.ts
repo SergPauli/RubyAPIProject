@@ -36,14 +36,13 @@ const router = createRouter({
   routes
 })
 router.beforeEach((to, from, next) => { 
-  //console.log("to",to) 
-  //console.log("from", from)
-  //console.log("token", store.getters.user)
+  
   if(to.matched.some(record => record.meta.requiresAuth)) {
     if (store.getters.isLoggedIn) {
       next()
       return
-    } next("/login")     
+    }     
+    next("/login")     
   } else if (to.matched.some((record) => record.name === "Login") && store.getters.isLoggedIn) next("/")
     else next() 
 })

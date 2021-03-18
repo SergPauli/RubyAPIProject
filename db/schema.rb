@@ -10,7 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_28_025418) do
+ActiveRecord::Schema.define(version: 2021_03_10_040049) do
+
+  create_table "audits", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "guid", limit: 36
+    t.integer "action", limit: 1
+    t.string "table", limit: 70
+    t.string "field", limit: 70
+    t.string "detail"
+    t.string "before"
+    t.string "after"
+    t.integer "severity", limit: 1
+    t.string "summary"
+    t.bigint "user_id"
+    t.datetime "created_at"
+    t.index ["user_id"], name: "index_audits_on_user_id"
+  end
 
   create_table "contacts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "type"
@@ -55,6 +70,32 @@ ActiveRecord::Schema.define(version: 2020_12_28_025418) do
     t.text "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "retrieves", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "audit_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["audit_id"], name: "index_retrieves_on_audit_id"
+    t.index ["user_id", "audit_id"], name: "by_retrieve", unique: true
+    t.index ["user_id"], name: "index_retrieves_on_user_id"
+  end
+
+  create_table "subscribes", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "name"
+    t.string "guid", limit: 36
+    t.integer "action", limit: 1
+    t.string "table", limit: 70
+    t.string "field", limit: 70
+    t.integer "severity", limit: 1
+    t.integer "life", limit: 2
+    t.string "summary"
+    t.boolean "active"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_subscribes_on_user_id"
   end
 
   create_table "users", id: :integer, limit: 1, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

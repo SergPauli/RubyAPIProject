@@ -2,9 +2,11 @@ class Person < ApplicationRecord
   has_many :contacts, ->{ select(:id, :person_id, :data, :description, :type) }, dependent: :destroy  
   has_many :emails
   has_many :phones
+  has_many :faxes
   accepts_nested_attributes_for :contacts, allow_destroy: true
   accepts_nested_attributes_for :emails 
   accepts_nested_attributes_for :phones
+  accepts_nested_attributes_for :faxes
 
   def self.nested_attributes
     return [contacts_attributes: [:id, :data, :description, :_destroy], 
