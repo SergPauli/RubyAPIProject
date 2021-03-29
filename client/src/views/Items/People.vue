@@ -39,6 +39,7 @@
           scrollHeight="300px"
           :virtualRowHeight="virtualRowHeight"
           :lazy="true"
+          @sort="onSort($event)"
           :first="first"
           :rows="rows"
           :loading="loading"
@@ -279,11 +280,12 @@
 </template>
 
 <script>
-import PersonService from "@/service/personService"
+import UniversalService from "@/service/universalService"
 import Chip from "@/components/Chip/Chip.vue"
 const regexPhone =/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 const regexPhone2 =/\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})? ?(\w{1,10}\s?\d{1,6})?/;
 const regexMail = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const MODEL = "Person/"
 export default {
   data() {
     return {
@@ -293,6 +295,7 @@ export default {
       deletePersonDialog: false,
       deletePeopleDialog: false,
       person: {},
+      lazyParams: {},
       contacts: [],
       selectedPeople: null,
       filters: {},
@@ -305,7 +308,7 @@ export default {
       submitted: false,
       lazyTotalRecords: 0,
       virtualRowHeight: 48
-    };
+    }
   },  
   watch: {
     filter(){      
@@ -314,12 +317,24 @@ export default {
   },
   personService: null,
   created() {
-    this.personService = new PersonService(this.$router);
+    this.universalService = new UniversalService(this.$router)
   },
   mounted() {
+    this.lazyParams = {
+      first: 0,
+      rows: this.$refs.dt.rows,
+      sortField: null,
+      sortOrder: null,
+      filters: this.filters
+    }
     this.getCount()       
   },
   methods: {
+    onSort(event) {
+      this.lazyParams = event
+      console.log('lazyParams', this.lazyParams)      
+      this.loadChunk(this.lazyParams.first, this.rows * 2)
+    },
     getContactName(person) {
       if (person.contacts === undefined || person.contacts.length == 0) return ""
       let result = person.contacts[0].data
@@ -363,8 +378,8 @@ export default {
       this.contact =  {data:"", type:null, description:""}   
     },
     onNext(currentId,nextId) {
-      document.getElementById(currentId).blur(); 
-      document.getElementById(nextId).focus();
+      document.getElementById(currentId).blur() 
+      document.getElementById(nextId).focus()
     },
        
     openNew() {
@@ -374,19 +389,20 @@ export default {
       this.personDialog = true      
     },
     hideDialog() {      
-      this.personDialog = false;
-      this.submitted = false;
+      this.personDialog = false
+      this.submitted = false
     },
     savePerson() {
-      this.submitted = true;
+      this.submitted = true
       //console.log("permitted",JSON.stringify(this.request.permitted))
       Object.keys(this.request).forEach(key => {
         if (key!=="permitted" ) this.request.permitted.push(key)
       })      
       if (this.request.permitted.length > 0 ) {
         if (this.person.id) { 
-          this.loading= true              
-          this.personService.edit(this.person.id, this.request)
+          this.loading= true           
+          const idx = this.people.findIndex(p=>p.id == this.person.id)                   
+          this.universalService.edit(MODEL, this.person.id, this.request)
             .then((data) => {        
               this.loading = false
               this.$toast.add({
@@ -395,13 +411,13 @@ export default {
                 detail: "Person Updated",
                 life: 3000,
               }); 
-              this.request = {permitted: []} 
-              this.people = this.people.filter(p=>p.id != this.person.id ) 
-              this.people.push(data)               
-            }).catch((error)=>this.$store.dispatch("putMessage", {severity:"error", detail: error.message, summary:"Error" }));          
+              this.request = {permitted: []}              
+              if (idx > 0) this.people[idx] = data                             
+            }).catch((error)=>this.$store.dispatch("putMessage", 
+            {severity:"error", detail: error.message, summary:"Error" }))          
         } else {
           this.loading= true              
-          this.personService.create(this.request)
+          this.universalService.create(MODEL, this.request)
             .then((data) => {        
               this.loading = false
               this.$toast.add({
@@ -413,17 +429,18 @@ export default {
               this.request = {permitted: []} 
               if (data.contacts===undefined) data.contacts=[]
               this.people.push(data)                 
-            }).catch((error)=>this.$store.dispatch("putMessage", {severity:"error", detail: error.message, summary:"Error" }));
+            }).catch((error)=>this.$store.dispatch("putMessage", 
+            {severity:"error", detail: error.message, summary:"Error" }))
         }
-        this.personDialog = false;
-        this.person = {};
+        this.personDialog = false
+        this.person = {}
       } else {
         this.$toast.add({
             severity: "info",
             summary: "Decline",
             detail: "There is no changes",
             life: 3000,
-          });
+          })
       }
     },    
     editPerson(person) {
@@ -445,17 +462,17 @@ export default {
         summary: "Successful",
         detail: "person Deleted",
         life: 3000,
-      });
+      })
     },
     findIndexById(id) {
       let index = -1;
       for (let i = 0; i < this.people.length; i++) {
         if (this.people[i].id === id) {
-          index = i;
-          break;
+          index = i
+          break
         }
       }
-      return index;
+      return index
     },
     createId() {
       let id = "";
@@ -466,21 +483,21 @@ export default {
       return id;
     },
     exportCSV() {
-      this.$refs.dt.exportCSV();
+      this.$refs.dt.exportCSV()
     },
     confirmDeleteSelected() {
-      this.deletePeopleDialog = true;
+      this.deletePeopleDialog = true
     },
     deleteSelectedPeople() {
-      this.people = this.people.filter((val) => !this.selectedPeople.includes(val));
-      this.deletePeopleDialog = false;
-      this.selectedPeople = null;
+      this.people = this.people.filter((val) => !this.selectedPeople.includes(val))
+      this.deletePeopleDialog = false
+      this.selectedPeople = null
       this.$toast.add({
         severity: "success",
         summary: "Successful",
         detail: "People Deleted",
         life: 3000,
-      });
+      })
     },
     getCount() {
        const params = {        
@@ -490,8 +507,11 @@ export default {
       if (this.filter) {        
         params.q={'text_cont':this.filter}
       }
+      if (this.lazyParams.sortField) {
+        params.q.sorts = [this.lazyParams.sortField + (this.lazyParams.sortOrder == '1' ? ' asc' : ' desc')]
+      }
       this.loading= true
-      this.personService.getPeople(params)
+      this.universalService.index(MODEL, params)
       .then((data) => {        
         this.loading = false
         this.lazyTotalRecords = data        
@@ -512,19 +532,23 @@ export default {
       if (this.filter) {        
         params.q={'text_cont': this.filter}
       }
+      if (this.lazyParams.sortField) {
+        params.q.sorts = [this.lazyParams.sortField + (this.lazyParams.sortOrder == '1' ? ' asc' : ' desc')] 
+      }
       this.loading= true
-      this.personService.getPeople(params)
+      this.universalService.index(MODEL, params)
       .then((data) => {
         //console.log(data)
         this.people = data
         this.loading = false        
       })
-      .catch((error)=>this.$store.dispatch("putMessage", {severity:"error", detail: error.message, summary:"Error" }));
+      .catch((error)=>this.$store.dispatch("putMessage", 
+      {severity:"error", detail: error.message, summary:"Error" }))
     },
     onVirtualScroll(event) { 
       const  index =   this.lazyTotalRecords - this.rows      
-      console.log('first', this.first) 
-      console.log('event.first', event.first)
+      //console.log('first', this.first) 
+      //console.log('event.first', event.first)
       if (this.first == event.first && event.first <  index) this.loadChunk(event.first, this.rows*2)
       this.first = event.first
     },
