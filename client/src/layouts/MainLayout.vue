@@ -20,7 +20,7 @@
         <MainMenu />
       </div>
       <ActionBar />
-      <div class="layout-content">
+      <div class="layout-content" :style="{padding: '1rem 0.6em 0 0.6em'}">
         <router-view />        
       </div>
       <ToastSpot /> 

@@ -258,7 +258,7 @@ body a {
 }
 
 .layout-wrapper.layout-fullwidth {
-  padding: 25px 0px;
+  padding: 5px 0;
 }
 
 .layout-wrapper.layout-fullwidth .layout-topbar, .layout-wrapper.layout-fullwidth .layout-menu-container {
@@ -266,11 +266,11 @@ body a {
 }
 
 .layout-wrapper.layout-fullwidth .layout-footer {
-  padding: 35px 50px;
+  padding: 0px 50px;
 }
 
 .layout-wrapper.layout-fullwidth.layout-menu-overlay .overlay-menu-button {
-  top: 100px;
+  top: 58px;
 }
 
 .layout-wrapper.layout-fullwidth.layout-menu-overlay .layout-actionbar {
@@ -302,7 +302,7 @@ body a {
 }
 
 .layout-topbar {
-  margin-bottom: 25px;
+  margin-bottom: 0;
 }
 
 .layout-topbar::after {
@@ -1125,10 +1125,11 @@ body a {
 
 .layout-actionbar {
   display: flex;
+  min-height: 46px;
   align-items: center;
   justify-content: space-between;
   background-color: rgb(255, 255, 255);
-  padding: 10px 25px;
+  padding: 5px 25px;
   position: relative;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px 0px;
 }

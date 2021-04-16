@@ -3725,7 +3725,7 @@
   background-color: rgba(0, 0, 0, 0.4);
 }
 
- .p-disabled a {
+.p-disabled a {
   cursor: not-allowed;
 }
 

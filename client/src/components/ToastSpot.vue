@@ -11,8 +11,7 @@ export default  {
   created() {
     this.unwatch = this.$store.watch(
       (state, getters) => getters.message,
-      (newValue, oldValue) => {
-        //console.log(`Updating from ${JSON.stringify(oldValue)} to ${JSON.stringify(newValue)}`) 
+      (newValue, oldValue) => {       
         if (newValue.detail && (this.$store.state.status==="" || (this.$store.state.status==="loading"))) this.showMessage(newValue)
       },
     )

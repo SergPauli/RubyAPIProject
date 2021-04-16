@@ -329,7 +329,7 @@ Devise.setup do |config|
           puts   'Auth token has expired ', token             
           return false 
       rescue ::JWT::DecodeError 
-        puts   'Auth token is invalid ', token
+        puts   'Auth token is invalid', token
         return false
       end        
     end

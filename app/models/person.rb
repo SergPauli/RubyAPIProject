@@ -24,14 +24,9 @@ class Person < ApplicationRecord
     return result
   end 
 
-  # def as_json(options={})
-  #   contacts_arr = Array.new     
-  #   result = super(options) 
-  #   contacts.each do |contact|      
-  #     contacts_arr.push(contact.as_json(only: [:id, :data, :type]))      
-  #   end  
-  #   #, :phone_ids=>phone_ids, :email_ids=>email_ids  
-  #   return result.merge({:contacts =>contacts_arr}) 
-  # end     
+  def to_s
+    "{id:"+id.to_s+" "+ full_name+"}"
+  end
+      
   ransack_alias :text, :name_or_surname_or_middlename_or_description
 end

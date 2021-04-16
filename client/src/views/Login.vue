@@ -35,10 +35,16 @@ export default defineComponent({
     return {
       username: this.$store.getters.user ? this.$store.getters.user.login : null,
       password: null,
-      isLoading: this.$store.status == 'loading'            
+      //isLoading: this.$store.status == 'loading'            
     };
   },
-  computed: mapState(['status']),  
+  
+  computed: {
+    //mapState(['status']),
+    isLoading() {      
+      return this.$store.getters.status === 'loading'
+    }
+  },    
   methods: {
     loginHandler() {
       if (this.username && this.username.length>2 && this.password && this.password.length>5) {
@@ -47,9 +53,10 @@ export default defineComponent({
           password: this.password,
           router:  this.$router
         };
-        this.$store.dispatch("login", data).then((result) => {
-          this.$router.push("/");
+        this.$store.dispatch("login", data).then((result) => {          
+          this.$router.push("/")          
         }).catch((error)=>{this.$store.dispatch("putMessage", {severity:"error", detail: error.message, summary:"Access denied" })})
+        console.log('loginHandler', this.$store.getters.status )
       } else  this.$store.dispatch("putMessage", {severity:"error", summary: "Error", detail:"login or passord is incorrect"})  
     },
   },

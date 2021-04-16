@@ -5,9 +5,12 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Vue } from "vue-class-component";
+<script>
 
-export default class Home extends Vue {  
+
+export default {  
+  created() {
+    this.$store.dispatch("setActionBarButtons", [])
+  }
 }
 </script>
