@@ -23,7 +23,7 @@
             ></a>
             <div class="layout-quickmenu-tooltip">
               <div class="layout-quickmenu-tooltip-arrow"></div>
-              <div class="layout-quickmenu-tooltip-text">Bookmarks</div>
+              <div class="layout-quickmenu-tooltip-text">Закладки</div>
             </div>
           </li>
           <li>
