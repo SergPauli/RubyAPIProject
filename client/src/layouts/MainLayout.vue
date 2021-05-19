@@ -20,12 +20,12 @@
         <MainMenu />
       </div>
       <ActionBar />
-      <div class="layout-content" :style="{padding: '1rem 0.6em 0 0.6em'}">
+      <div id='contentDiv' class="layout-content" :style="{padding: '0'}">
         <router-view />        
       </div>
       <ToastSpot /> 
     </div>
-    <div class="layout-footer"></div>
+    <div v-if="isFooter" class="layout-footer"></div>
     <div class="layout-mask"></div>      
   </div>
 </template>
@@ -38,6 +38,7 @@ import MainMenu from '../components/MainMenu.vue'
 export default { 
   data() {
     return {
+      isFooter: false,
       layoutMode: "overlay",
       wrapperMode: 1,
       overlayMenuActive: !1,
@@ -48,7 +49,7 @@ export default {
       isLoggedIn: this.$store.getters.isLoggedIn,      
       user: this.$store.getters.user
     }
-  },
+  },  
   watch: {
     $route() {
       (this.menuActive = !1)

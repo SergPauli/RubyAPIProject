@@ -258,7 +258,7 @@ body a {
 }
 
 .layout-wrapper.layout-fullwidth {
-  padding: 5px 0;
+  padding: 0;
 }
 
 .layout-wrapper.layout-fullwidth .layout-topbar, .layout-wrapper.layout-fullwidth .layout-menu-container {
@@ -1156,8 +1156,9 @@ body a {
 .layout-actionbar .layout-actions ul>li>button {
   position: relative;
   margin-left: 5px;
-  background-color: rgb(248, 249, 250);
-  color: rgb(117, 117, 117);
+  background-color: rgb(240 237 249);
+  color: rgb(248, 249, 250);
+  ;
   font-size: 15px;
   width: 36px;
   height: 36px;

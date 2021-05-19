@@ -70,21 +70,17 @@ export default {
 
 <style>
 .layout-actionbar .layout-actions ul > li > button.p-button-success:hover {
-  background: rgb(94, 143, 50);
-  color: rgb(255, 255, 255);
-  border-color: rgb(94, 143, 50);
-}
-
-.layout-actionbar .layout-actions ul > li > button.p-button-success {
   color: rgb(255, 255, 255);
   background: rgb(104, 159, 56);
-  border: 1px solid rgb(104, 159, 56);
+  border: 1px solid rgb(104, 159, 56); 
+ }
+
+.layout-actionbar .layout-actions ul > li > button.p-button-success {  
+  color: rgb(104, 159, 56);
 }
 
 .layout-actionbar .layout-actions ul > li > button.p-button-help {
-  color: rgb(255, 255, 255);
-  background: rgb(156, 39, 176);
-  border: 1px solid rgb(156, 39, 176);
+  color: rgb(156, 39, 176);  
 }
 .layout-actionbar .layout-actions ul > li > button.p-button-help:hover {
   background: rgb(140, 35, 158);
@@ -92,13 +88,21 @@ export default {
   border-color: rgb(140, 35, 158);
 }
 .layout-actionbar .layout-actions ul > li > button.p-button-danger {
-  color: rgb(255, 255, 255);
-  background: rgb(211, 47, 47);
-  border: 1px solid rgb(211, 47, 47);
+  color: rgb(211, 47, 47);  
 }
 .layout-actionbar .layout-actions ul > li > button.p-button-danger:hover {
   background: rgb(170, 36, 36);
   color: rgb(255, 255, 255);
   border-color: rgb(170, 36, 36);
+}
+
+.layout-actionbar .layout-actions ul > li > button.p-disabled {
+  color: rgb(255, 255, 255) !important;  
+}
+
+.layout-actionbar .layout-actions ul > li > button.p-disabled:hover {
+  color: rgb(255, 255, 255) !important;  
+  background:  rgb(207, 216, 220) !important;
+  border-color: rgb(255, 255, 255) !important; 
 }
 </style>

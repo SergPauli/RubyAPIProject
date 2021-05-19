@@ -31,24 +31,17 @@ class Api::V1::UniversalApiController < ApiController
       render json: {status: 200, data: @res}
     end
     def create
-      if @res = @model_class.create(permitted_params)
+      @res = @model_class.create!(permitted_params)
+      if @res
         add_audit_record ((@res.respond_to? :guid) ? @res.guid : nil), :added, @model_class.primary_key, nil, @res.id, "Add record", "Object #{@res.to_s} added", :info 
-        if params[:include]
-          if @model_class.nested_select_params 
-            render json: {status: 200, data: @res.as_json(include: @model_class.nested_select_params)}           
-          else
-            render json: {status: 200, data: @res.as_json(include: get_includes_model)} 
-          end
-        else  
-          render json: {status: 200, data: @res} 
-        end  
+        j_render
       else
         invalid_resource!(@res)
       end
     end
     def update      
       if @res.update(permitted_params)
-        render json: {status: 200, data: @res}
+        j_render
       else
         invalid_resource!(@res)
       end
@@ -111,6 +104,27 @@ class Api::V1::UniversalApiController < ApiController
         end        
       end
 
+      def get_onlys_fields
+        if params[:only]
+          case params[:only]
+          when String            
+            params[:only].to_sym 
+          when Array
+            params[:only].map { |param| param.to_sym}
+          end           
+        end        
+      end
+      def get_included_fields
+        if params[:include]
+          case params[:include]
+          when "1"
+            @model_class.nested_select_params          
+          else
+            get_includes_model
+          end
+        end  
+      end  
+
       def get_model_name
         raise "Model User can not be used for that" if params[:model_name] == "User"
         params[:model_name] || controller_name.classify
@@ -135,11 +149,17 @@ class Api::V1::UniversalApiController < ApiController
           end        
         end
       end
-
       def find_record
         @res = @model_class.find(params[@model_class.primary_key.to_sym])
       end
       def get_user
         @user = current_user
-      end  
+      end
+      def j_render
+        if params[:only] || params[:include]           
+          render json: {status: 200, data: @res.as_json( only: get_onlys_fields, include: get_included_fields)}
+        else 
+          render json: {status: 200, data: @res} 
+        end
+      end    
   end

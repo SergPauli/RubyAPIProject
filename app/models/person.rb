@@ -3,6 +3,8 @@ class Person < ApplicationRecord
   has_many :emails
   has_many :phones
   has_many :faxes
+  has_many :users, dependent: :destroy 
+
   accepts_nested_attributes_for :contacts, allow_destroy: true
   accepts_nested_attributes_for :emails 
   accepts_nested_attributes_for :phones
@@ -15,7 +17,7 @@ class Person < ApplicationRecord
   end 
 
   def self.nested_select_params
-    return [contacts: {only: [:id, :data, :description, :type]}] 
+    return [contacts: {only: [:id, :data, :description, :type]}, users: {only: :id}] 
   end  
 
   def full_name
@@ -27,6 +29,9 @@ class Person < ApplicationRecord
   def to_s
     "{id:"+id.to_s+" "+ full_name+"}"
   end
-      
+  
+  validates :surname, presence: true  
+  validates :name, presence: true
+
   ransack_alias :text, :name_or_surname_or_middlename_or_description
 end

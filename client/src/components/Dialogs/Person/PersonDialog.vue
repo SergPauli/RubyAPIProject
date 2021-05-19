@@ -165,8 +165,9 @@ export default {
   emits: ["save", "hide"],  
   data() {  
     const conts = []    
-    this.$store.state.personDialog.person.contacts.forEach(contact =>{conts.push(contact.data)})      
+    if (this.$store.state.personDialog.person.contacts) this.$store.state.personDialog.person.contacts.forEach(contact =>{conts.push(contact.data)})      
     return {
+      contactTypes: contactTypes,
       visible: this.$store.state.personDialog.visible,  
       pers: this.$store.state.personDialog.person,
       submitted: this.$store.state.personDialog.submitted,  
@@ -268,7 +269,9 @@ export default {
       this.componentKey += 1;
       this.pers = this.$store.state.personDialog.person
       this.visible = this.$store.state.personDialog.visible
-      console.log('this.$store.state.personDialog',this.$store.state.personDialog)
+      this.request = { permitted: [] }
+      this.contacts = []    
+      if (this.pers.contacts) this.pers.contacts.forEach(contact =>{this.contacts.push(contact.data)})     
     },
   },
   computed: {
@@ -283,3 +286,37 @@ export default {
   
 }
 </script>
+<style>
+  .contact-item {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    color: #055160;
+  }
+  .contact-item .contact-item-value {  
+    margin-left: 0.4rem;
+    color: #565e5d;
+  }
+  .p-checkbox {
+  display: inline-flex;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  vertical-align: bottom;
+}
+.p-hidden-accessible {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}
+</style>
